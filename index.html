@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>113 Anime</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600;700;800&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #fdf6f0;
+  --bg2:     #fef9f5;
+  --paper:   #fffaf7;
+  --petal1:  #f2a7b8;
+  --petal2:  #e8829a;
+  --petal3:  #fcd5de;
+  --ink:     #2d1f26;
+  --ink2:    #5c3d4a;
+  --muted:   #b09aa4;
+  --accent:  #d4547a;
+  --accent2: #8b4f7a;
+  --green:   #7a9e7e;
+  --border:  rgba(212,84,122,0.12);
+  --shadow:  rgba(45,31,38,0.08);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--ink);font-family:'Zen Kaku Gothic New','Noto Sans JP',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;background-image:radial-gradient(ellipse at 20% 0%,rgba(242,167,184,0.18) 0%,transparent 60%),radial-gradient(ellipse at 80% 0%,rgba(252,213,222,0.22) 0%,transparent 50%),radial-gradient(ellipse at 50% 100%,rgba(201,151,90,0.08) 0%,transparent 60%);pointer-events:none;}
+#sakuraCanvas{position:fixed;inset:0;z-index:1;pointer-events:none;}
+
+/* ══════════════ PROFILE SCREEN ══════════════ */
+#profileScreen {
+  position:fixed;inset:0;z-index:9000;
+  background: linear-gradient(160deg,#fdf0f4 0%,#fdf6f0 40%,#f0f4fd 100%);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:48px;
+  animation:profileIn .5s ease;
+}
+@keyframes profileIn{from{opacity:0}to{opacity:1}}
+#profileScreen.hide{animation:profileOut .6s ease forwards;}
+@keyframes profileOut{from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(1.06)}}
+
+.profile-logo{
+  font-family:'Shippori Mincho',serif;
+  font-size:2.2rem;font-weight:800;letter-spacing:4px;
+  color:var(--ink);text-align:center;
+}
+.profile-logo span{color:var(--accent);}
+.profile-logo .psub{
+  display:block;font-size:0.7rem;letter-spacing:6px;
+  color:var(--muted);font-family:'Noto Sans JP',sans-serif;
+  margin-top:6px;font-weight:300;
+}
+
+.profile-title{
+  font-family:'Shippori Mincho',serif;
+  font-size:1.4rem;font-weight:700;letter-spacing:3px;
+  color:var(--ink2);text-align:center;
+}
+
+.profile-cards{
+  display:flex;gap:32px;flex-wrap:wrap;justify-content:center;
+}
+
+.profile-card{
+  cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  padding:32px 28px 24px;
+  background:var(--paper);
+  border:2px solid rgba(212,84,122,0.12);
+  border-radius:20px;
+  width:180px;
+  box-shadow:0 8px 32px var(--shadow);
+  transition:all .3s cubic-bezier(.34,1.3,.64,1);
+}
+.profile-card:hover{
+  transform:translateY(-8px) scale(1.03);
+  border-color:var(--accent);
+  box-shadow:0 20px 50px rgba(212,84,122,0.18);
+}
+
+.profile-avatar{
+  width:80px;height:80px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;
+  border:2.5px solid rgba(212,84,122,0.2);
+  transition:border-color .3s;
+}
+.profile-card:hover .profile-avatar{border-color:var(--accent);}
+.profile-card.young .profile-avatar{background:linear-gradient(135deg,#fce4eb,#fdf6f0);}
+.profile-card.adult .profile-avatar{background:linear-gradient(135deg,#f0e4fc,#fdf6f0);}
+
+.profile-name{
+  font-family:'Shippori Mincho',serif;
+  font-size:1rem;font-weight:700;letter-spacing:2px;
+  color:var(--ink);
+}
+.profile-desc{
+  font-size:0.72rem;color:var(--muted);text-align:center;
+  letter-spacing:0.5px;line-height:1.6;
+  font-family:'Noto Sans JP',sans-serif;
+}
+.profile-badge{
+  font-size:0.65rem;font-weight:700;letter-spacing:2px;
+  padding:3px 12px;border-radius:20px;
+  font-family:'Noto Sans JP',sans-serif;
+}
+.profile-card.young .profile-badge{background:rgba(122,158,126,0.15);color:var(--green);}
+.profile-card.adult .profile-badge{background:rgba(192,57,43,0.1);color:#c0392b;}
+
+.profile-sakura{
+  font-size:1.5rem;opacity:0.3;margin-top:8px;
+  letter-spacing:10px;
+}
+
+/* ══════════════ NETFLIX INTRO ══════════════ */
+#netflixIntro{
+  display:none;
+  position:fixed;inset:0;z-index:8000;
+  background:#000;
+  align-items:center;justify-content:center;
+}
+#netflixIntro.show{display:flex;}
+
+.intro-inner{
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:0;
+}
+
+.intro-logo-wrap{
+  position:relative;
+  animation:introZoom 2.5s cubic-bezier(.25,.46,.45,.94) forwards;
+}
+@keyframes introZoom{
+  0%{opacity:0;transform:scale(2.5);}
+  20%{opacity:1;}
+  70%{transform:scale(1);}
+  85%{transform:scale(1);}
+  100%{opacity:0;transform:scale(0.8);}
+}
+
+.intro-logo{
+  font-family:'Shippori Mincho',serif;
+  font-size:clamp(4rem,10vw,8rem);
+  font-weight:800;
+  letter-spacing:8px;
+  color:#fff;
+  text-shadow:0 0 60px rgba(212,84,122,0.8),0 0 120px rgba(212,84,122,0.4);
+  position:relative;
+}
+.intro-logo span{color:var(--accent);}
+
+.intro-petals{
+  position:absolute;inset:-40px;
+  pointer-events:none;
+  overflow:hidden;
+}
+.intro-petal{
+  position:absolute;
+  font-size:1.5rem;
+  animation:introPetal 2.5s ease forwards;
+  opacity:0;
+}
+@keyframes introPetal{
+  0%{opacity:0;transform:scale(0) rotate(0deg);}
+  30%{opacity:1;}
+  100%{opacity:0;transform:scale(3) rotate(180deg) translateY(-60px);}
+}
+
+.intro-line{
+  width:0;height:3px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  animation:introLine 2.5s ease forwards;
+  margin-top:16px;
+  border-radius:2px;
+}
+@keyframes introLine{
+  0%{width:0;opacity:0;}
+  30%{opacity:1;}
+  60%{width:300px;opacity:1;}
+  100%{width:300px;opacity:0;}
+}
+
+/* ══════════════ MAIN APP ══════════════ */
+#app{display:none;}
+#app.show{display:block;}
+
+/* ══════════════ NAVBAR ══════════════ */
+nav{
+  position:sticky;top:0;z-index:500;
+  height:72px;
+  background:rgba(253,246,240,0.88);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(212,84,122,0.15);
+  display:flex;align-items:center;
+  justify-content:space-between;
+  padding:0 40px;gap:16px;
+  box-shadow:0 2px 30px rgba(212,84,122,0.07);
+}
+nav::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--petal1) 20%,var(--accent) 50%,var(--petal1) 80%,transparent);
+}
+
+.logo{
+  font-family:'Shippori Mincho',serif;font-weight:800;
+  font-size:1.45rem;letter-spacing:3px;color:var(--ink);
+  flex-shrink:0;display:flex;align-items:baseline;gap:6px;
+  position:relative;
+}
+.logo .logo-num{color:var(--accent);}
+.logo .logo-jp{font-size:0.58rem;letter-spacing:4px;color:var(--muted);font-weight:400;font-family:'Noto Sans JP',sans-serif;}
+.logo-sakura{font-size:0.95rem;animation:spin 8s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.nav-center{display:flex;align-items:center;gap:12px;flex:1;justify-content:center;max-width:560px;margin:0 auto;}
+
+.search-wrap{flex:1;position:relative;}
+.search-wrap input{
+  width:100%;background:var(--paper);
+  border:1.5px solid rgba(212,84,122,0.2);
+  border-radius:50px;padding:9px 20px 9px 42px;
+  color:var(--ink);font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:0.85rem;outline:none;
+  transition:border-color .25s,box-shadow .25s;
+  box-shadow:inset 0 1px 4px rgba(212,84,122,0.06);
+}
+.search-wrap input::placeholder{color:var(--muted);}
+.search-wrap input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(212,84,122,0.1);}
+.search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--petal2);}
+
+/* RANDOM BUTTON */
+.btn-random{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;color:#fff;
+  padding:9px 18px;border-radius:50px;
+  cursor:pointer;font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:0.8rem;font-weight:600;letter-spacing:1px;
+  white-space:nowrap;flex-shrink:0;
+  box-shadow:0 4px 16px rgba(212,84,122,0.3);
+  display:flex;align-items:center;gap:7px;
+  transition:all .25s;
+}
+.btn-random:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,84,122,0.4);filter:brightness(1.08);}
+.btn-random:active{transform:translateY(0);}
+
+/* PROFILE INDICATOR */
+.nav-profile{
+  display:flex;align-items:center;gap:8px;
+  cursor:pointer;flex-shrink:0;
+  padding:6px 12px;border-radius:50px;
+  border:1.5px solid rgba(212,84,122,0.15);
+  background:var(--paper);
+  transition:all .2s;font-size:0.78rem;color:var(--ink2);
+}
+.nav-profile:hover{border-color:var(--accent);color:var(--accent);}
+.nav-profile-icon{font-size:1rem;}
+
+/* ══════════════ HERO ══════════════ */
+.hero{position:relative;z-index:2;padding:60px 52px 44px;display:flex;align-items:flex-end;justify-content:space-between;gap:40px;}
+.hero-kana{font-family:'Noto Sans JP',sans-serif;font-size:0.7rem;letter-spacing:6px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:12px;}
+.hero-kana::before,.hero-kana::after{content:'';flex:1;max-width:40px;height:1px;}
+.hero-kana::before{background:linear-gradient(90deg,var(--petal1),transparent);}
+.hero-kana::after{background:linear-gradient(270deg,var(--petal1),transparent);}
+.hero h1{font-family:'Shippori Mincho',serif;font-size:clamp(2.8rem,6vw,5rem);font-weight:800;line-height:1;letter-spacing:4px;color:var(--ink);}
+.hero h1 .accent{color:var(--accent);}
+.hero h1 .num{font-size:0.7em;vertical-align:super;color:var(--accent);}
+.hero-sub{margin-top:14px;font-size:0.86rem;color:var(--ink2);letter-spacing:2px;line-height:1.8;font-weight:300;}
+.hero-profile-tag{
+  margin-top:16px;
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:0.75rem;letter-spacing:2px;
+  padding:5px 14px;border-radius:20px;
+  font-family:'Noto Sans JP',sans-serif;
+}
+.hero-profile-tag.young{background:rgba(122,158,126,0.12);color:var(--green);border:1px solid rgba(122,158,126,0.2);}
+.hero-profile-tag.adult{background:rgba(192,57,43,0.08);color:#c0392b;border:1px solid rgba(192,57,43,0.18);}
+
+.hero-branch{flex-shrink:0;width:200px;height:130px;display:none;}
+@media(min-width:900px){.hero-branch{display:block;}}
+
+/* ══════════════ DIVIDERS ══════════════ */
+.wave-divider{position:relative;z-index:2;padding:0 52px;margin-bottom:8px;}
+.wave-inner{border-top:1px solid rgba(212,84,122,0.15);display:flex;align-items:center;gap:14px;padding-top:20px;}
+.wave-title{font-family:'Shippori Mincho',serif;font-size:0.78rem;letter-spacing:5px;color:var(--accent2);white-space:nowrap;font-weight:600;}
+.wave-line{flex:1;height:1px;background:linear-gradient(90deg,rgba(212,84,122,0.2),transparent);}
+.wave-count{font-size:0.7rem;color:var(--muted);letter-spacing:2px;font-family:'Noto Sans JP',sans-serif;}
+.wave-petals{font-size:0.85rem;opacity:0.55;letter-spacing:3px;}
+
+/* ══════════════ GRILLE ══════════════ */
+#continueSectionWrap{position:relative;z-index:2;}
+.grid-wrap{position:relative;z-index:2;padding:24px 52px 100px;}
+.anime-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:20px;}
+
+.anime-card{
+  position:relative;cursor:pointer;border-radius:12px;overflow:hidden;
+  aspect-ratio:2/3;background:var(--paper);
+  border:1px solid rgba(212,84,122,0.12);
+  box-shadow:0 4px 20px var(--shadow),0 1px 3px rgba(212,84,122,0.06);
+  transition:transform .35s ease,box-shadow .35s ease,border-color .35s ease;
+  animation:cardBloom .5s ease both;
+}
+@keyframes cardBloom{from{opacity:0;transform:scale(0.94) translateY(14px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.anime-card:hover{transform:translateY(-10px) rotate(-0.5deg);box-shadow:0 24px 60px rgba(212,84,122,0.18),0 8px 20px rgba(45,31,38,0.1),0 0 0 1.5px rgba(212,84,122,0.3);border-color:rgba(212,84,122,0.35);}
+.anime-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease,filter .3s;}
+.anime-card:hover img{transform:scale(1.06);filter:brightness(0.82) saturate(1.1);}
+.card-overlay{position:absolute;bottom:0;left:0;right:0;padding:55px 14px 16px;background:linear-gradient(0deg,rgba(45,31,38,0.92) 0%,rgba(45,31,38,0.6) 50%,transparent 100%);color:#fff;}
+.card-title{font-family:'Shippori Mincho',serif;font-weight:700;font-size:0.86rem;line-height:1.35;margin-bottom:5px;}
+.card-meta{display:flex;align-items:center;gap:6px;}
+.card-petal{font-size:0.68rem;opacity:0.8;}
+.card-eps{font-size:0.66rem;color:rgba(255,255,255,0.65);letter-spacing:1px;font-family:'Noto Sans JP',sans-serif;}
+.card-bloom{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;z-index:3;}
+.card-bloom-inner{width:52px;height:52px;border-radius:50%;background:rgba(253,246,240,0.2);border:1.5px solid rgba(255,255,255,0.6);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transform:scale(0.7);transition:transform .3s;}
+.anime-card:hover .card-bloom{opacity:1;}
+.anime-card:hover .card-bloom-inner{transform:scale(1);}
+.card-bloom svg{color:#fff;margin-left:2px;}
+
+/* BADGES */
+.card-badge{position:absolute;top:10px;left:10px;z-index:4;font-family:'Noto Sans JP',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:1.5px;padding:3px 8px;border-radius:20px;}
+.badge-new{background:var(--accent);color:#fff;box-shadow:0 2px 10px rgba(212,84,122,0.4);}
+.badge-exclu{background:var(--accent2);color:#fff;box-shadow:0 2px 10px rgba(139,79,122,0.4);}
+.badge-resume{background:var(--green);color:#fff;box-shadow:0 2px 8px rgba(122,158,126,0.4);position:absolute;bottom:52px;right:10px;top:auto;left:auto;}
+.badge-adult{position:absolute;top:10px;right:10px;z-index:4;background:linear-gradient(135deg,#c0392b,#8e1a0e);color:#fff;font-family:'Noto Sans JP',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:1.5px;padding:3px 8px;border-radius:20px;box-shadow:0 2px 10px rgba(192,57,43,0.5);}
+
+/* NO RESULTS */
+.no-results{display:none;text-align:center;padding:80px;color:var(--muted);}
+.no-results.show{display:block;}
+.no-results .nr-icon{font-size:3rem;margin-bottom:16px;opacity:0.5;}
+.no-results h3{font-family:'Shippori Mincho',serif;font-size:1.1rem;letter-spacing:3px;color:var(--ink2);margin-bottom:6px;}
+
+/* ══════════════ MODAL PLAYER ══════════════ */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:1000;background:rgba(45,31,38,0.7);backdrop-filter:blur(14px);align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;animation:fadeOver .25s ease;}
+@keyframes fadeOver{from{opacity:0}to{opacity:1}}
+.modal{width:100%;max-width:900px;max-height:92vh;overflow-y:auto;overflow-x:hidden;background:var(--bg2);border-radius:18px;border:1px solid rgba(212,84,122,0.2);box-shadow:0 40px 100px rgba(45,31,38,0.4);animation:modalIn .35s cubic-bezier(.34,1.3,.64,1);scrollbar-width:thin;scrollbar-color:rgba(212,84,122,0.2) transparent;position:relative;}
+.modal::before,.modal::after{content:'🌸';position:absolute;font-size:1.2rem;opacity:0.25;pointer-events:none;}
+.modal::before{top:14px;left:16px;}.modal::after{top:14px;right:16px;}
+@keyframes modalIn{from{opacity:0;transform:scale(0.92) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-video{width:100%;aspect-ratio:16/9;background:#1a0d12;border-radius:18px 18px 0 0;overflow:hidden;}
+.modal-video iframe{width:100%;height:100%;border:none;display:block;}
+.modal-body{padding:26px 30px;}
+.modal-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--border);}
+.modal-anime-name{font-family:'Shippori Mincho',serif;font-size:1.65rem;font-weight:800;letter-spacing:2px;color:var(--ink);line-height:1;margin-bottom:6px;}
+.modal-ep-label{display:inline-flex;align-items:center;gap:6px;font-size:0.78rem;letter-spacing:1.5px;color:var(--accent);font-family:'Noto Sans JP',sans-serif;}
+.modal-close{background:transparent;border:1.5px solid rgba(212,84,122,0.2);color:var(--muted);width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:0.95rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.modal-close:hover{background:var(--accent);border-color:var(--accent);color:#fff;transform:rotate(90deg);}
+.ep-nav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:26px;}
+.ep-btn{background:var(--paper);border:1.5px solid rgba(212,84,122,0.18);color:var(--ink2);padding:11px 16px;border-radius:50px;cursor:pointer;font-family:'Zen Kaku Gothic New',sans-serif;font-size:0.82rem;font-weight:500;letter-spacing:1px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;box-shadow:0 2px 8px var(--shadow);}
+.ep-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);box-shadow:0 4px 16px rgba(212,84,122,0.15);transform:translateY(-1px);}
+.ep-btn:disabled{opacity:.3;cursor:not-allowed;}
+.ep-btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;color:#fff;font-weight:700;box-shadow:0 4px 20px rgba(212,84,122,0.3);}
+.ep-btn.primary:hover:not(:disabled){filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 8px 28px rgba(212,84,122,0.4);}
+.ep-list-label{display:flex;align-items:center;gap:10px;font-family:'Shippori Mincho',serif;font-size:0.78rem;letter-spacing:4px;color:var(--muted);margin-bottom:12px;font-weight:600;}
+.ep-list-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.ep-list{display:flex;flex-direction:column;gap:8px;}
+.ep-item{display:flex;align-items:center;gap:14px;padding:12px 16px;background:var(--paper);border:1px solid rgba(212,84,122,0.1);border-radius:12px;cursor:pointer;transition:all .22s;box-shadow:0 1px 6px var(--shadow);}
+.ep-item:hover{border-color:rgba(212,84,122,0.3);box-shadow:0 4px 16px rgba(212,84,122,0.1);transform:translateX(4px);}
+.ep-item.active{background:linear-gradient(135deg,rgba(242,167,184,0.12),rgba(252,213,222,0.18));border-color:rgba(212,84,122,0.35);box-shadow:0 4px 16px rgba(212,84,122,0.12);}
+.ep-flower{font-size:0.9rem;transition:transform .3s;}
+.ep-item:hover .ep-flower,.ep-item.active .ep-flower{transform:rotate(30deg);}
+.ep-num{font-family:'Shippori Mincho',serif;font-size:1rem;font-weight:700;color:var(--accent);min-width:40px;}
+.ep-title{flex:1;font-size:0.86rem;color:var(--ink2);}
+.ep-chevron{color:var(--muted);font-size:0.75rem;transition:transform .2s,color .2s;}
+.ep-item:hover .ep-chevron,.ep-item.active .ep-chevron{color:var(--accent);transform:translateX(3px);}
+
+/* ══════════════ POPUP +18 ══════════════ */
+.warn-overlay{display:none;position:fixed;inset:0;z-index:2000;background:rgba(45,31,38,0.78);backdrop-filter:blur(14px);align-items:center;justify-content:center;padding:20px;}
+.warn-overlay.open{display:flex;animation:fadeOver .25s ease;}
+.warn-box{background:var(--paper);border-radius:22px;border:1.5px solid rgba(192,57,43,0.25);box-shadow:0 40px 100px rgba(45,31,38,0.35);padding:44px 40px;max-width:440px;width:100%;text-align:center;animation:modalIn .35s cubic-bezier(.34,1.3,.64,1);position:relative;overflow:hidden;}
+.warn-box::before{content:'⚠️';position:absolute;top:-10px;right:-10px;font-size:5rem;opacity:0.05;pointer-events:none;}
+.warn-icon{font-size:3.2rem;margin-bottom:14px;display:block;}
+.warn-title{font-family:'Shippori Mincho',serif;font-size:1.55rem;font-weight:800;color:#c0392b;letter-spacing:2px;margin-bottom:12px;}
+.warn-badge{display:inline-block;background:linear-gradient(135deg,#c0392b,#8e1a0e);color:#fff;font-weight:700;font-size:0.8rem;padding:5px 18px;border-radius:20px;letter-spacing:3px;margin-bottom:20px;box-shadow:0 4px 16px rgba(192,57,43,0.4);font-family:'Noto Sans JP',sans-serif;}
+.warn-text{font-size:0.9rem;color:var(--ink2);line-height:1.8;margin-bottom:22px;}
+.warn-text strong{color:var(--ink);}
+.warn-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:26px;}
+.warn-tag{background:rgba(192,57,43,0.07);border:1px solid rgba(192,57,43,0.18);color:#c0392b;font-size:0.68rem;font-weight:600;padding:4px 12px;border-radius:20px;letter-spacing:1px;font-family:'Noto Sans JP',sans-serif;}
+.warn-divider{width:40px;height:2px;background:linear-gradient(90deg,var(--petal1),var(--petal2));border-radius:2px;margin:0 auto 24px;}
+.warn-buttons{display:flex;gap:12px;}
+.warn-btn-no{flex:1;background:transparent;border:1.5px solid rgba(212,84,122,0.2);color:var(--muted);padding:12px;border-radius:50px;cursor:pointer;font-family:'Zen Kaku Gothic New',sans-serif;font-size:0.85rem;transition:all .2s;}
+.warn-btn-no:hover{border-color:var(--accent);color:var(--accent);}
+.warn-btn-yes{flex:1;background:linear-gradient(135deg,#c0392b,#8e1a0e);border:none;color:#fff;padding:12px;border-radius:50px;cursor:pointer;font-family:'Zen Kaku Gothic New',sans-serif;font-size:0.85rem;font-weight:700;letter-spacing:1px;transition:all .2s;box-shadow:0 4px 20px rgba(192,57,43,0.35);}
+.warn-btn-yes:hover{filter:brightness(1.1);transform:translateY(-2px);box-shadow:0 8px 28px rgba(192,57,43,0.45);}
+
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(212,84,122,0.2);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<canvas id="sakuraCanvas"></canvas>
+
+<!-- ══════════════ ÉCRAN DE PROFIL ══════════════ -->
+<div id="profileScreen">
+  <div class="profile-logo">
+    <span style="color:var(--accent)">113</span>Anime <span style="font-size:1.2rem">🌸</span>
+    <span class="psub">アニメ — Qui regarde ?</span>
+  </div>
+  <div class="profile-title">Choisir un profil</div>
+  <div class="profile-cards">
+    <div class="profile-card young" onclick="selectProfile('young')">
+      <div class="profile-avatar">🌸</div>
+      <div class="profile-name">Jeune</div>
+      <div class="profile-desc">Tous les animes sans contenu choquant</div>
+      <div class="profile-badge">TOUT PUBLIC</div>
+    </div>
+    <div class="profile-card adult" onclick="selectProfile('adult')">
+      <div class="profile-avatar">⛩️</div>
+      <div class="profile-name">Adulte</div>
+      <div class="profile-desc">Catalogue complet, incluant les animes +18</div>
+      <div class="profile-badge">+18 INCLUS</div>
+    </div>
+  </div>
+  <div class="profile-sakura">🌸 🌸 🌸</div>
+</div>
+
+<!-- ══════════════ INTRO NETFLIX ══════════════ -->
+<div id="netflixIntro">
+  <div class="intro-inner">
+    <div class="intro-logo-wrap">
+      <div class="intro-petals" id="introPetals"></div>
+      <div class="intro-logo"><span>113</span>Anime</div>
+    </div>
+    <div class="intro-line"></div>
+  </div>
+</div>
+
+<!-- ══════════════ APP ══════════════ -->
+<div id="app">
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">
+      <span class="logo-num">113</span>
+      <span>Anime</span>
+      <span class="logo-sakura">🌸</span>
+      <span class="logo-jp">アニメ</span>
+    </div>
+
+    <div class="nav-center">
+      <div class="search-wrap">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Rechercher un anime…" oninput="filterAnime(this.value)">
+      </div>
+      <button class="btn-random" onclick="randomAnime()">
+        🎲 Aléatoire
+      </button>
+    </div>
+
+    <div class="nav-profile" id="navProfile" onclick="switchProfile()">
+      <span class="nav-profile-icon" id="navProfileIcon">🌸</span>
+      <span id="navProfileName">Jeune</span>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-kana">春のアニメ</div>
+      <h1><span class="num">113</span><span class="accent">Anime</span></h1>
+      <p class="hero-sub">Tes créations originales<br>sous les cerisiers en fleur</p>
+      <div class="hero-profile-tag" id="heroProfileTag">🌸 Profil Jeune — Tout public</div>
+    </div>
+    <svg class="hero-branch" viewBox="0 0 220 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 130 Q60 100 120 70 Q160 50 200 20" stroke="#8b5e6a" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.5"/>
+      <path d="M80 85 Q100 65 130 50" stroke="#8b5e6a" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.4"/>
+      <path d="M130 68 Q155 55 170 40" stroke="#8b5e6a" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.35"/>
+      <g opacity="0.75"><circle cx="55" cy="100" r="8" fill="#f2a7b8"/><circle cx="65" cy="94" r="7" fill="#fcd5de"/><circle cx="50" cy="92" r="6" fill="#e8829a"/></g>
+      <g opacity="0.8"><circle cx="110" cy="72" r="9" fill="#fcd5de"/><circle cx="122" cy="66" r="7" fill="#f2a7b8"/><circle cx="118" cy="78" r="6" fill="#e8829a"/></g>
+      <g opacity="0.7"><circle cx="160" cy="46" r="8" fill="#f2a7b8"/><circle cx="172" cy="40" r="7" fill="#fcd5de"/><circle cx="155" cy="38" r="5" fill="#e8829a"/></g>
+      <circle cx="90" cy="80" r="4" fill="#fcd5de" opacity="0.6"/>
+      <circle cx="140" cy="58" r="4" fill="#f2a7b8" opacity="0.55"/>
+      <circle cx="185" cy="30" r="3.5" fill="#fcd5de" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <!-- CONTINUE -->
+  <div id="continueSectionWrap"></div>
+
+  <!-- CATALOGUE -->
+  <div class="wave-divider">
+    <div class="wave-inner">
+      <span class="wave-title">CATALOGUE</span>
+      <span class="wave-petals">🌸 🌸 🌸</span>
+      <span class="wave-line"></span>
+      <span class="wave-count" id="animeCount"></span>
+    </div>
+  </div>
+
+  <div class="grid-wrap">
+    <div class="anime-grid" id="animeGrid"></div>
+    <div class="no-results" id="noResults">
+      <div class="nr-icon">🌸</div>
+      <h3>Aucun résultat</h3>
+      <p>Essaie un autre titre…</p>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- MODAL PLAYER -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-video">
+      <iframe id="playerFrame" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+    </div>
+    <div class="modal-body">
+      <div class="modal-header">
+        <div>
+          <div class="modal-anime-name" id="modalAnimeTitle"></div>
+          <div class="modal-ep-label"><span>🌸</span><span id="modalEpTitle"></span></div>
+        </div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="ep-nav">
+        <button class="ep-btn" id="prevBtn" onclick="navigate(-1)">◀ Précédent</button>
+        <button class="ep-btn primary" id="nextBtn" onclick="navigate(1)">Suivant ▶</button>
+      </div>
+      <div class="ep-list-label">🌸 ÉPISODES</div>
+      <div class="ep-list" id="epList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- POPUP +18 -->
+<div class="warn-overlay" id="warnOverlay">
+  <div class="warn-box">
+    <span class="warn-icon">⚠️</span>
+    <div class="warn-title">Contenu sensible</div>
+    <div class="warn-badge">+18</div>
+    <p class="warn-text">Cet anime peut contenir des scènes de <strong>violence, bagarres intenses</strong> et d'autres contenus pouvant choquer certains spectateurs.</p>
+    <div class="warn-tags">
+      <span class="warn-tag">⚔️ Violence</span>
+      <span class="warn-tag">🩸 Sang</span>
+      <span class="warn-tag">💥 Bagarres</span>
+      <span class="warn-tag">⚠️ Contenu fort</span>
+    </div>
+    <div class="warn-divider"></div>
+    <div class="warn-buttons">
+      <button class="warn-btn-no" onclick="closeWarning()">← Retour</button>
+      <button class="warn-btn-yes" onclick="confirmWarning()">J'ai compris ✓</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  DONNÉES — AJOUTE TES ANIMES ICI
+//  adult: true  → badge +18 + popup avertissement
+// ══════════════════════════════════════════════
+const ANIMES = [
+  {
+    id: 1,
+    titre: "Horimiya",
+    cover: "https://m.media-amazon.com/images/I/71hsNIpmdZL.jpg",
+    badge: "NOUVEAU",
+    episodes: [
+      { titre: "Épisode 1 – 1",    url: "https://video.sibnet.ru/shell.php?videoid=4958981" },
+      { titre: "Épisode 2 – 2",    url: "https://video.sibnet.ru/shell.php?videoid=4958983" },
+      { titre: "Épisode 3 – 3",   url: "https://video.sibnet.ru/shell.php?videoid=4958984" },
+      { titre: "Épisode 4 – 4",   url: "https://video.sibnet.ru/shell.php?videoid=4958986" },
+      { titre: "Épisode 5 – 5",   url: "https://video.sibnet.ru/shell.php?videoid=4958987" },
+      { titre: "Épisode 6 – 6",   url: "https://video.sibnet.ru/shell.php?videoid=4958988" },
+      { titre: "Épisode 7 – 7",   url: "https://video.sibnet.ru/shell.php?videoid=4958990" },
+      { titre: "Épisode 8 – 8",   url: "https://video.sibnet.ru/shell.php?videoid=4958991" },
+      { titre: "Épisode 9 – 9",   url: "https://video.sibnet.ru/shell.php?videoid=4958992" },
+      { titre: "Épisode 10 – 10",   url: "https://video.sibnet.ru/shell.php?videoid=4958994" },
+      { titre: "Épisode 11 – 11",   url: "https://video.sibnet.ru/shell.php?videoid=4958995" },
+      { titre: "Épisode 12 – 12",   url: "https://video.sibnet.ru/shell.php?videoid=4958997" },
+      { titre: "Épisode 13 – 13",   url: "https://video.sibnet.ru/shell.php?videoid=4958999" },
+    ]
+  },
+  {
+    id: 2,
+    titre: "Roshidere",
+    cover: "https://a.storyblok.com/f/178900/1447x2047/f06550e8a5/lya-sometimes-hides-her-feelings-in-russian-season-2-announcement-momoco.jpg/m/filters:quality(95)format(webp)",
+    badge: "EXCLUSIF",
+    episodes: [
+      { titre: "Épisode 1 – 1",      url: "https://video.sibnet.ru/shell.php?videoid=5647593" },
+      { titre: "Épisode 2 – 2", url: "https://video.sibnet.ru/shell.php?videoid=5657559" },
+      { titre: "Épisode 3 – 3", url: "https://video.sibnet.ru/shell.php?videoid=5718931" },
+      { titre: "Épisode 4 – 4", url: "https://video.sibnet.ru/shell.php?videoid=5718933" },
+      { titre: "Épisode 5 – 5", url: "https://video.sibnet.ru/shell.php?videoid=5718934" },
+      { titre: "Épisode 6 – 6", url: "https://video.sibnet.ru/shell.php?videoid=5718935" },
+      { titre: "Épisode 7 – 7", url: "https://video.sibnet.ru/shell.php?videoid=5718937" },
+      { titre: "Épisode 8 – 8", url: "https://video.sibnet.ru/shell.php?videoid=5718939" },
+      { titre: "Épisode 9 – 9", url: "https://video.sibnet.ru/shell.php?videoid=5718941" },
+      { titre: "Épisode 10 – 10", url: "https://video.sibnet.ru/shell.php?videoid=5727469" },
+      { titre: "Épisode 11 – 11", url: "https://video.sibnet.ru/shell.php?videoid=5735812" },
+      { titre: "Épisode 12 – 12", url: "https://video.sibnet.ru/shell.php?videoid=5744136" },
+    ]
+  },
+  {
+    id: 3,
+    titre: "Solo leveling",
+    cover: "https://m.media-amazon.com/images/I/816hywlmu-L.jpg",
+    badge: "",
+    episodes: [
+      { titre: "Épisode 1 – S1-1", url: "https://video.sibnet.ru/shell.php?videoid=5406687" },
+      { titre: "Épisode 2 – S1-2", url: "https://video.sibnet.ru/shell.php?videoid=5415193" },
+      { titre: "Épisode 3 – S1-3", url: "https://video.sibnet.ru/shell.php?videoid=5421450" },
+      { titre: "Épisode 4 – S1-4", url: "https://video.sibnet.ru/shell.php?videoid=5428347" },
+      { titre: "Épisode 5 – S1-5", url: "https://video.sibnet.ru/shell.php?videoid=5435958" },
+      { titre: "Épisode 6 – S1-6", url: "https://video.sibnet.ru/shell.php?videoid=5444965" },
+      { titre: "Épisode 7 – S1-7", url: "https://video.sibnet.ru/shell.php?videoid=5453272" },
+      { titre: "Épisode 8 – S1-8", url: "https://video.sibnet.ru/shell.php?videoid=54706527" },
+      { titre: "Épisode 9 – S1-9", url: "https://video.sibnet.ru/shell.php?videoid=5479612" },
+      { titre: "Épisode 10 – S1-10", url: "https://video.sibnet.ru/shell.php?videoid=5496084" },
+      { titre: "Épisode 11 – S1-11", url: "https://video.sibnet.ru/shell.php?videoid=5504016" },
+      { titre: "Épisode 12 – S1-12", url: "https://video.sibnet.ru/shell.php?videoid=5511308" },
+      { titre: "Épisode 1 – S2-1", url: "https://video.sibnet.ru/shell.php?videoid=5806748" },
+      { titre: "Épisode 2 – S2-2", url: "https://video.sibnet.ru/shell.php?videoid=5812653" },
+      { titre: "Épisode 3 – S2-3", url: "https://video.sibnet.ru/shell.php?videoid=5819532" },
+      { titre: "Épisode 4 – S2-4", url: "https://video.sibnet.ru/shell.php?videoid=5826552" },
+      { titre: "Épisode 5 – S2-5", url: "https://video.sibnet.ru/shell.php?videoid=5834007" },
+      { titre: "Épisode 6 – S2-6", url: "https://video.sibnet.ru/shell.php?videoid=5839458" },
+      { titre: "Épisode 7 – S2-7", url: "https://video.sibnet.ru/shell.php?videoid=5845865" },
+      { titre: "Épisode 8 – S2-8", url: "https://video.sibnet.ru/shell.php?videoid=5851984" },
+      { titre: "Épisode 9 – S2-9", url: "https://video.sibnet.ru/shell.php?videoid=5857932" },
+      { titre: "Épisode 10 – S2-10", url: "https://video.sibnet.ru/shell.php?videoid=58640657" },
+      { titre: "Épisode 11 – S2-11", url: "https://video.sibnet.ru/shell.php?videoid=5869318" },
+      { titre: "Épisode 12 – S2-12", url: "https://video.sibnet.ru/shell.php?videoid=5877505" },
+      { titre: "Épisode 13 – S2-13", url: "https://video.sibnet.ru/shell.php?videoid=5885451" },
+    ]
+  },
+    {
+    id: 4,
+    titre: "I want to eat your pancreas",
+    cover: "https://imusic.b-cdn.net/images/item/original/946/5022366605946.jpg?i-want-to-eat-your-pancreas-2020-i-want-to-eat-your-pancreas-dvd&class=scaled&v=1739865941",
+    badge: "",
+    episodes: [
+      { titre: "Épisode 1 – 1",      url: "https://video.sibnet.ru/shell.php?videoid=4004955" },
+    ]
+  },
+      {
+    id: 5,
+    titre: "Bloom",
+    cover: "https://media.hachette.fr/imgArticle/NOBINOBI/2024/9782373499759-001-X.jpeg?source=web&v=e263607e1fbbf68ee8cfef06d3139c6a",
+    badge: "",
+    episodes: [
+      { titre: "Épisode 1 – 1",      url: "https://video.sibnet.ru/shell.php?videoid=6011370" },
+      { titre: "Épisode 2 – 2",      url: "https://video.sibnet.ru/shell.php?videoid=6011370" },
+      { titre: "Épisode 3 – 3",      url: "https://video.sibnet.ru/shell.php?videoid=6013226" },
+      { titre: "Épisode 4 – 4",      url: "https://video.sibnet.ru/shell.php?videoid=6018030" },
+      { titre: "Épisode 5 – 5",      url: "https://video.sibnet.ru/shell.php?videoid=6022345" },
+      { titre: "Épisode 6 – 6",      url: "https://video.sibnet.ru/shell.php?videoid=6026321" },
+      { titre: "Épisode 7 – 7",      url: "https://video.sibnet.ru/shell.php?videoid=6032012" },
+      { titre: "Épisode 8 – 8",      url: "https://video.sibnet.ru/shell.php?videoid=6037855" },
+      { titre: "Épisode 9 – 9",      url: "https://video.sibnet.ru/shell.php?videoid=6044258" },
+      { titre: "Épisode 10 – 10",      url: "https://video.sibnet.ru/shell.php?videoid=6048975" },
+      { titre: "Épisode 11 – 11",      url: "https://video.sibnet.ru/shell.php?videoid=6053850" },
+      { titre: "Épisode 12 – 12",      url: "https://video.sibnet.ru/shell.php?videoid=6058361" },
+      { titre: "Épisode 13 – 13",      url: "https://video.sibnet.ru/shell.php?videoid=6063474" },
+    ]
+  },
+        {
+    id: 6,
+    titre: "Please Put Them On, Takamine-san",
+    cover: "https://www.nautiljon.com/images/breves/00/88/1722592501010_image.webp",
+    adult: true,
+    badge: "",
+    episodes: [
+      { titre: "Épisode 3 – 3",      url: "https://video.sibnet.ru/shell.php?videoid=5888642" },
+    ]
+  },
+        {
+    id: 7,
+    titre: "Adam's Sweet Agony",
+    cover: "https://image.oceanveil.net/public/anime_titles/000/000000/000000247/000000247_vertical_with_logo.jpg.webp",
+    adult: true,
+    badge: "",
+    episodes: [
+      { titre: "Épisode 1 – 1",      url: "https://video.sibnet.ru/shell.php?videoid=6146541" },
+      { titre: "Épisode 2 – 2",      url: "https://video.sibnet.ru/shell.php?videoid=6146540" },
+      { titre: "Épisode 3 – 3",      url: "https://video.sibnet.ru/shell.php?videoid=6146539" },
+      { titre: "Épisode 4 – 4",      url: "https://video.sibnet.ru/shell.php?videoid=6146538" },
+      { titre: "Épisode 5 – 5",      url: "https://video.sibnet.ru/shell.php?videoid=6146536" },
+      { titre: "Épisode 6 – 6",      url: "https://video.sibnet.ru/shell.php?videoid=6146537" },
+      { titre: "Épisode 7 – 7",      url: "https://video.sibnet.ru/shell.php?videoid=6146534" },
+      { titre: "Épisode 8 – 8",      url: "https://video.sibnet.ru/shell.php?videoid=6146535" },
+    ]
+  },
+          {
+    id: 8,
+    titre: "Honey lemon soda",
+    cover: "https://media.hachette.fr/imgArticle/NOBINOBI/2024/9782373498479-001-X.jpeg?source=web&v=7980b3bcd8ee36dcfc3d467eb5765a95",
+    adult: false,
+    badge: "",
+    episodes: [
+      { titre: "Épisode 1 – 1",      url: "https://video.sibnet.ru/shell.php?videoid=5810067" },
+      { titre: "Épisode 2 – 2",      url: "https://video.sibnet.ru/shell.php?videoid=5816508" },
+      { titre: "Épisode 3 – 3",      url: "https://video.sibnet.ru/shell.php?videoid=5823398" },
+      { titre: "Épisode 4 – 4",      url: "https://video.sibnet.ru/shell.php?videoid=5830001" },
+      { titre: "Épisode 5 – 5",      url: "https://video.sibnet.ru/shell.php?videoid=5837297" },
+      { titre: "Épisode 6 – 6",      url: "https://video.sibnet.ru/shell.php?videoid=5843438" },
+      { titre: "Épisode 7 – 7",      url: "https://video.sibnet.ru/shell.php?videoid=5849681" },
+      { titre: "Épisode 8 – 8",      url: "https://video.sibnet.ru/shell.php?videoid=5855586" },
+      { titre: "Épisode 9 – 9",      url: "https://video.sibnet.ru/shell.php?videoid=5861855" },
+      { titre: "Épisode 10 – 10",      url: "https://video.sibnet.ru/shell.php?videoid=5867112" },
+      { titre: "Épisode 11 – 11",      url: "https://video.sibnet.ru/shell.php?videoid=5873747" },
+      { titre: "Épisode 12 – 12",      url: "https://video.sibnet.ru/shell.php?videoid=5882080" },
+    ]
+  },
+            {
+    id: 9,
+    titre: "Romantic killer",
+    cover: "https://m.media-amazon.com/images/M/MV5BNWQ3NzE1MTQtOGNjYy00Zjg0LWIyMmQtNDAxN2VlODdiMjc4XkEyXkFqcGc@._V1_QL75_UX190_CR0,0,190,281_.jpg",
+    adult: false,
+    badge: "",
+    episodes: [
+      { titre: "Épisode 1 – 1",      url: "https://video.sibnet.ru/shell.php?videoid=4934444" },
+      { titre: "Épisode 2 – 2",      url: "https://video.sibnet.ru/shell.php?videoid=4934445" },
+      { titre: "Épisode 3 – 3",      url: "https://video.sibnet.ru/shell.php?videoid=4934447" },
+      { titre: "Épisode 4 – 4",      url: "https://video.sibnet.ru/shell.php?videoid=4934449" },
+      { titre: "Épisode 5 – 5",      url: "https://video.sibnet.ru/shell.php?videoid=4934451" },
+      { titre: "Épisode 6 – 6",      url: "https://video.sibnet.ru/shell.php?videoid=4934452" },
+      { titre: "Épisode 7 – 7",      url: "https://video.sibnet.ru/shell.php?videoid=4934453" },
+      { titre: "Épisode 8 – 8",      url: "https://video.sibnet.ru/shell.php?videoid=4934455" },
+      { titre: "Épisode 9 – 9",      url: "https://video.sibnet.ru/shell.php?videoid=4934458" },
+      { titre: "Épisode 10 – 10",      url: "https://video.sibnet.ru/shell.php?videoid=4934460" },
+      { titre: "Épisode 11 – 11",      url: "https://video.sibnet.ru/shell.php?videoid=4934462" },
+      { titre: "Épisode 12 – 12",      url: "https://video.sibnet.ru/shell.php?videoid=4934464" },
+    ]
+  },
+      {
+    id: 10,
+    titre: "To me the one who loved you (VOSTFR!)",
+    cover: "https://fr.web.img6.acsta.net/c_310_420/pictures/23/04/24/10/17/1185490.jpg",
+    badge: "",
+    episodes: [
+      { titre: "Épisode 1 – 1",      url: "https://video.sibnet.ru/shell.php?videoid=5120680" },
+    ]
+  },
+        {
+    id: 11,
+    titre: "To Every You Ive Loved Before (VOSTFR!)",
+    cover: "https://m.media-amazon.com/images/S/pv-target-images/8596c199519c50e8f139f336a81d94c628f2397ae2ad9ad66e09ae6606f99003.jpg",
+    badge: "",
+    episodes: [
+      { titre: "Épisode 1 – 1",      url: "https://video.sibnet.ru/shell.php?videoid=5120673" },
+    ]
+  },
+    {
+    id: 12,
+    titre: "Tokyo Ghoul",
+    cover: "https://m.media-amazon.com/images/I/81gv-D-LqhL._AC_UF1000,1000_QL80_.jpg",
+    adult: true,
+    badge: "",
+    episodes: [
+      { titre: "Épisode 1 – S1-1", url: "https://video.sibnet.ru/shell.php?videoid=3608056" },
+      { titre: "Épisode 2 – S1-2", url: "https://video.sibnet.ru/shell.php?videoid=2737054" },
+      { titre: "Épisode 3 – S1-3", url: "https://video.sibnet.ru/shell.php?videoid=2737056" },
+      { titre: "Épisode 4 – S1-4", url: "https://video.sibnet.ru/shell.php?videoid=3608057" },
+      { titre: "Épisode 5 – S1-5", url: "https://video.sibnet.ru/shell.php?videoid=2737061" },
+      { titre: "Épisode 6 – S1-6", url: "https://video.sibnet.ru/shell.php?videoid=2737063" },
+      { titre: "Épisode 7 – S1-7", url: "https://video.sibnet.ru/shell.php?videoid=2737067" },
+      { titre: "Épisode 8 – S1-8", url: "https://video.sibnet.ru/shell.php?videoid=2737077" },
+      { titre: "Épisode 9 – S1-9", url: "https://video.sibnet.ru/shell.php?videoid=2737080" },
+      { titre: "Épisode 10 – S1-10", url: "https://video.sibnet.ru/shell.php?videoid=2737083" },
+      { titre: "Épisode 11 – S1-11", url: "https://video.sibnet.ru/shell.php?videoid=2737088" },
+      { titre: "Épisode 12 – S1-12", url: "https://video.sibnet.ru/shell.php?videoid=2737091" },
+      { titre: "Épisode 1 – S2-1", url: "https://video.sibnet.ru/shell.php?videoid=2736326" },
+      { titre: "Épisode 2 – S2-2", url: "https://video.sibnet.ru/shell.php?videoid=2736327" },
+      { titre: "Épisode 3 – S2-3", url: "https://video.sibnet.ru/shell.php?videoid=2736330" },
+      { titre: "Épisode 4 – S2-4", url: "https://video.sibnet.ru/shell.php?videoid=2736396" },
+      { titre: "Épisode 5 – S2-5", url: "https://video.sibnet.ru/shell.php?videoid=2736400" },
+      { titre: "Épisode 6 – S2-6", url: "https://video.sibnet.ru/shell.php?videoid=4666150" },
+      { titre: "Épisode 7 – S2-7", url: "https://video.sibnet.ru/shell.php?videoid=4666156" },
+      { titre: "Épisode 8 – S2-8", url: "https://video.sibnet.ru/shell.php?videoid=4666157" },
+      { titre: "Épisode 9 – S2-9", url: "https://video.sibnet.ru/shell.php?videoid=4666158" },
+      { titre: "Épisode 10 – S2-10", url: "https://video.sibnet.ru/shell.php?videoid=4666159" },
+      { titre: "Épisode 11 – S2-11", url: "https://video.sibnet.ru/shell.php?videoid=4666161" },
+      { titre: "Épisode 12 – S2-12", url: "https://video.sibnet.ru/shell.php?videoid=466616" },
+    ]
+  },
+      {
+    id: 13,
+    titre: "My dress up darling",
+    cover: "https://m.media-amazon.com/images/I/91kUbCiJMDL._AC_UF1000,1000_QL80_.jpg",
+    adult: false,
+    badge: "",
+    episodes: [
+      { titre: "Épisode 1 – S1-1", url: "https://video.sibnet.ru/shell.php?videoid=5154250" },
+      { titre: "Épisode 2 – S1-2", url: "https://video.sibnet.ru/shell.php?videoid=5161071" },
+      { titre: "Épisode 3 – S1-3", url: "https://video.sibnet.ru/shell.php?videoid=516736" },
+      { titre: "Épisode 4 – S1-4", url: "https://video.sibnet.ru/shell.php?videoid=5174870" },
+      { titre: "Épisode 5 – S1-5", url: "https://video.sibnet.ru/shell.php?videoid=4668127" },
+      { titre: "Épisode 6 – S1-6", url: "https://video.sibnet.ru/shell.php?videoid=5185531" },
+      { titre: "Épisode 7 – S1-7", url: "https://video.sibnet.ru/shell.php?videoid=5192235" },
+      { titre: "Épisode 8 – S1-8", url: "https://video.sibnet.ru/shell.php?videoid=5198973" },
+      { titre: "Épisode 9 – S1-9", url: "https://video.sibnet.ru/shell.php?videoid=5205077" },
+      { titre: "Épisode 10 – S1-10", url: "https://video.sibnet.ru/shell.php?videoid=5211665" },
+      { titre: "Épisode 11 – S1-11", url: "https://video.sibnet.ru/shell.php?videoid=5219782" },
+      { titre: "Épisode 12 – S1-12", url: "https://video.sibnet.ru/shell.php?videoid=5226783" },
+      { titre: "Épisode 1 – S2-1", url: "https://video.sibnet.ru/shell.php?videoid=5975684" },
+      { titre: "Épisode 2 – S2-2", url: "https://video.sibnet.ru/shell.php?videoid=5981121" },
+      { titre: "Épisode 3 – S2-3", url: "https://video.sibnet.ru/shell.php?videoid=5987749" },
+      { titre: "Épisode 4 – S2-4", url: "https://video.sibnet.ru/shell.php?videoid=5991889" },
+      { titre: "Épisode 5 – S2-5", url: "https://video.sibnet.ru/shell.php?videoid=5996978" },
+      { titre: "Épisode 6 – S2-6", url: "https://video.sibnet.ru/shell.php?videoid=6002481" },
+      { titre: "Épisode 7 – S2-7", url: "https://video.sibnet.ru/shell.php?videoid=6011158" },
+      { titre: "Épisode 8 – S2-8", url: "https://video.sibnet.ru/shell.php?videoid=6013652" },
+      { titre: "Épisode 9 – S2-9", url: "https://video.sibnet.ru/shell.php?videoid=6017438" },
+      { titre: "Épisode 10 – S2-10", url: "https://video.sibnet.ru/shell.php?videoid=6022077" },
+      { titre: "Épisode 11 – S2-11", url: "https://video.sibnet.ru/shell.php?videoid=6025986" },
+      { titre: "Épisode 12 – S2-12", url: "https://video.sibnet.ru/shell.php?videoid=6031542" },
+    ]
+  },
+];
+
+// ══ SAKURA PETALS ══
+const canvas = document.getElementById('sakuraCanvas');
+const ctx = canvas.getContext('2d');
+let petals = [];
+let W, H;
+function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+window.addEventListener('resize', resize); resize();
+const PCOLORS=['#f2a7b8','#fcd5de','#e8829a','#f9b8c8','#fce4eb'];
+function mkPetal(){ return { x:Math.random()*W,y:-20,size:4+Math.random()*8,color:PCOLORS[Math.floor(Math.random()*PCOLORS.length)],speedX:-1+Math.random()*2,speedY:0.6+Math.random()*1.2,rotation:Math.random()*Math.PI*2,rotSpeed:(Math.random()-.5)*.04,opacity:.4+Math.random()*.5,swing:Math.random()*Math.PI*2,swingSpeed:.01+Math.random()*.02 }; }
+for(let i=0;i<35;i++){ const p=mkPetal(); p.y=Math.random()*H; petals.push(p); }
+function drawP(p){ ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rotation); ctx.globalAlpha=p.opacity; ctx.fillStyle=p.color; ctx.beginPath(); ctx.ellipse(0,0,p.size,p.size*.55,0,0,Math.PI*2); ctx.fill(); ctx.restore(); }
+function animP(){ ctx.clearRect(0,0,W,H); if(Math.random()<.04) petals.push(mkPetal()); petals.forEach((p,i)=>{ p.swing+=p.swingSpeed; p.x+=p.speedX+Math.sin(p.swing)*.5; p.y+=p.speedY; p.rotation+=p.rotSpeed; drawP(p); if(p.y>H+20) petals.splice(i,1); }); if(petals.length>60) petals.splice(0,petals.length-60); requestAnimationFrame(animP); }
+animP();
+
+// ══ ÉTAT ══
+let currentProfile = null;
+let currentAnime = null;
+let currentEpIndex = 0;
+let pendingAnime = null;
+let pendingEp = 0;
+
+// ══ PROGRESS ══
+function saveProgress(id,idx){ const d=JSON.parse(localStorage.getItem('113anime_sakura')||'{}'); d[id]=idx; localStorage.setItem('113anime_sakura',JSON.stringify(d)); }
+function getProgress(id){ const d=JSON.parse(localStorage.getItem('113anime_sakura')||'{}'); return d[id]??null; }
+
+// ══════════════════════════════════════════════
+//  SÉLECTION DE PROFIL
+// ══════════════════════════════════════════════
+function selectProfile(profile) {
+  currentProfile = profile;
+
+  // Cache l'écran de profil
+  const ps = document.getElementById('profileScreen');
+  ps.classList.add('hide');
+  setTimeout(() => { ps.style.display = 'none'; }, 600);
+
+  // Lance l'intro Netflix
+  setTimeout(() => playIntro(profile), 400);
+}
+
+// ══ INTRO STYLE NETFLIX ══
+function playIntro(profile) {
+  const intro = document.getElementById('netflixIntro');
+  intro.classList.add('show');
+
+  // Génère les pétales d'intro
+  const container = document.getElementById('introPetals');
+  const emojis = ['🌸','🌸','🌺','🌸','🌸'];
+  const positions = [
+    {top:'10%',left:'5%'},{top:'20%',right:'5%'},{bottom:'10%',left:'15%'},
+    {top:'50%',left:'2%'},{bottom:'20%',right:'10%'}
+  ];
+  emojis.forEach((e, i) => {
+    const p = document.createElement('div');
+    p.className = 'intro-petal';
+    p.textContent = e;
+    Object.assign(p.style, positions[i]);
+    p.style.animationDelay = (i * 0.15) + 's';
+    container.appendChild(p);
+  });
+
+  // Après 2.8s → affiche l'app
+  setTimeout(() => {
+    intro.classList.remove('show');
+    container.innerHTML = '';
+    showApp(profile);
+  }, 2800);
+}
+
+// ══ AFFICHER L'APP ══
+function showApp(profile) {
+  const app = document.getElementById('app');
+  app.classList.add('show');
+  updateProfileUI(profile);
+  renderGrid(getVisibleAnimes());
+  renderContinue();
+}
+
+// ══ MAJ UI PROFIL ══
+function updateProfileUI(profile) {
+  const isAdult = profile === 'adult';
+  document.getElementById('navProfileIcon').textContent = isAdult ? '⛩️' : '🌸';
+  document.getElementById('navProfileName').textContent = isAdult ? 'Adulte' : 'Jeune';
+
+  const tag = document.getElementById('heroProfileTag');
+  tag.className = 'hero-profile-tag ' + profile;
+  tag.textContent = isAdult
+    ? '⛩️ Profil Adulte — Catalogue complet'
+    : '🌸 Profil Jeune — Tout public';
+}
+
+// ══ CHANGER DE PROFIL ══
+function switchProfile() {
+  document.getElementById('app').classList.remove('show');
+  const ps = document.getElementById('profileScreen');
+  ps.style.display = 'flex';
+  ps.classList.remove('hide');
+  currentProfile = null;
+  document.getElementById('searchInput').value = '';
+}
+
+// ══ ANIMES VISIBLES SELON PROFIL ══
+function getVisibleAnimes() {
+  if (currentProfile === 'adult') return ANIMES;
+  return ANIMES.filter(a => !a.adult);
+}
+
+// ══ RENDER GRILLE ══
+function renderGrid(list) {
+  const grid = document.getElementById('animeGrid');
+  const noRes = document.getElementById('noResults');
+  const count = document.getElementById('animeCount');
+  grid.innerHTML = '';
+  if (!list.length) { noRes.classList.add('show'); return; }
+  noRes.classList.remove('show');
+  count.textContent = list.length + ' anime' + (list.length > 1 ? 's' : '');
+
+  list.forEach((anime, i) => {
+    const prog = getProgress(anime.id);
+    const badgeClass = anime.badge === 'NOUVEAU' ? 'badge-new' : anime.badge === 'EXCLUSIF' ? 'badge-exclu' : '';
+    const card = document.createElement('div');
+    card.className = 'anime-card';
+    card.style.animationDelay = (i * 0.06) + 's';
+    card.onclick = () => openModal(anime, prog !== null ? prog : 0);
+    card.innerHTML = `
+      <img src="${anime.cover}" alt="${anime.titre}" loading="lazy">
+      ${anime.badge ? `<div class="card-badge ${badgeClass}">${anime.badge}</div>` : ''}
+      ${anime.adult ? `<div class="card-badge badge-adult">+18</div>` : ''}
+      ${prog !== null ? `<div class="card-badge badge-resume">▶ ÉP.${prog+1}</div>` : ''}
+      <div class="card-bloom"><div class="card-bloom-inner"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+      <div class="card-overlay">
+        <div class="card-title">${anime.titre}</div>
+        <div class="card-meta">
+          <span class="card-petal">${anime.adult ? '⚠️' : '🌸'}</span>
+          <span class="card-eps">${anime.episodes.length} épisode${anime.episodes.length>1?'s':''}</span>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ══ SECTION CONTINUER ══
+function renderContinue() {
+  const d = JSON.parse(localStorage.getItem('113anime_sakura') || '{}');
+  const ids = Object.keys(d);
+  const wrap = document.getElementById('continueSectionWrap');
+  wrap.innerHTML = '';
+  const visible = getVisibleAnimes().map(a => String(a.id));
+  const filtered = ids.filter(id => visible.includes(id));
+  if (!filtered.length) return;
+
+  wrap.innerHTML = `
+    <div class="wave-divider">
+      <div class="wave-inner">
+        <span class="wave-title" style="color:var(--green)">CONTINUER À REGARDER</span>
+        <span class="wave-petals">🌿 🌸 🌿</span>
+        <span class="wave-line"></span>
+      </div>
+    </div>
+    <div class="grid-wrap" style="padding-bottom:0">
+      <div class="anime-grid" id="continueGrid"></div>
+    </div>
+  `;
+  const grid = document.getElementById('continueGrid');
+  filtered.forEach(id => {
+    const anime = ANIMES.find(a => a.id == id);
+    if (!anime) return;
+    const idx = d[id];
+    const ep = anime.episodes[idx];
+    const card = document.createElement('div');
+    card.className = 'anime-card';
+    card.onclick = () => openModal(anime, idx);
+    card.innerHTML = `
+      <img src="${anime.cover}" alt="${anime.titre}" loading="lazy">
+      ${anime.adult ? `<div class="card-badge badge-adult">+18</div>` : ''}
+      <div class="card-badge badge-resume">▶ ÉP.${idx+1}</div>
+      <div class="card-bloom"><div class="card-bloom-inner"><svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+      <div class="card-overlay">
+        <div class="card-title">${anime.titre}</div>
+        <div class="card-meta"><span class="card-petal">🌿</span><span class="card-eps" style="color:rgba(255,255,255,0.8)">${ep.titre}</span></div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ══ RECHERCHE ══
+function filterAnime(q) {
+  const base = getVisibleAnimes();
+  const filtered = q ? base.filter(a => a.titre.toLowerCase().includes(q.toLowerCase())) : base;
+  renderGrid(filtered);
+}
+
+// ══ ANIME ALÉATOIRE (jamais +18) ══
+function randomAnime() {
+  // On ne lance que les animes sans adult:true
+  const safe = getVisibleAnimes().filter(a => !a.adult);
+  if (!safe.length) return;
+  const anime = safe[Math.floor(Math.random() * safe.length)];
+  launchModal(anime, 0);
+}
+
+// ══ OPEN MODAL (avec check +18) ══
+function openModal(anime, epIndex = 0) {
+  if (anime.adult && currentProfile === 'adult') {
+    pendingAnime = anime;
+    pendingEp = epIndex;
+    document.getElementById('warnOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    return;
+  }
+  launchModal(anime, epIndex);
+}
+
+function launchModal(anime, epIndex) {
+  currentAnime = anime;
+  currentEpIndex = epIndex;
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  buildEpList();
+
+  // ── ANIMATION DANS LE PLAYER AVANT DE LANCER ──
+  const frame = document.getElementById('playerFrame');
+  const videoWrap = frame.parentElement;
+
+  // Vide l'iframe et affiche l'animation
+  frame.src = '';
+  frame.style.display = 'none';
+
+  // Crée l'overlay d'intro dans le player
+  let introDiv = document.getElementById('playerIntro');
+  if (introDiv) introDiv.remove();
+  introDiv = document.createElement('div');
+  introDiv.id = 'playerIntro';
+  introDiv.style.cssText = `
+    position:absolute; inset:0;
+    background:#0a0408;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    gap:12px; z-index:10;
+    border-radius:18px 18px 0 0;
+    overflow:hidden;
+  `;
+  introDiv.innerHTML = `
+    <div id="playerIntroLogo" style="
+      font-family:'Shippori Mincho',serif;
+      font-size:clamp(2rem,5vw,3.5rem);
+      font-weight:800; letter-spacing:6px; color:#fff;
+      text-shadow:0 0 40px rgba(212,84,122,0.9), 0 0 80px rgba(212,84,122,0.4);
+      animation:piZoom 2.2s cubic-bezier(.25,.46,.45,.94) forwards;
+      position:relative; z-index:2;
+    "><span style="color:#d4547a">113</span>Anime</div>
+    <div id="playerIntroLine" style="
+      height:2px; width:0;
+      background:linear-gradient(90deg,transparent,#d4547a,transparent);
+      border-radius:2px;
+      animation:piLine 2.2s ease forwards;
+      z-index:2;
+    "></div>
+    <div id="playerIntroPetals" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1;"></div>
+    <style>
+      @keyframes piZoom {
+        0%  { opacity:0; transform:scale(3); }
+        20% { opacity:1; }
+        65% { transform:scale(1); }
+        85% { transform:scale(1); opacity:1; }
+        100%{ opacity:0; transform:scale(0.85); }
+      }
+      @keyframes piLine {
+        0%  { width:0; opacity:0; }
+        25% { opacity:1; }
+        60% { width:200px; opacity:1; }
+        100%{ width:200px; opacity:0; }
+      }
+      @keyframes piPetal {
+        0%  { opacity:0; transform:scale(0) rotate(0deg) translate(0,0); }
+        30% { opacity:1; }
+        100%{ opacity:0; transform:scale(2.5) rotate(200deg) translate(20px,-40px); }
+      }
+    </style>
+  `;
+
+  // Positionne le wrap en relative pour que l'overlay se place bien
+  videoWrap.style.position = 'relative';
+  videoWrap.appendChild(introDiv);
+
+  // Génère de petits pétales dans le player
+  const petalContainer = introDiv.querySelector('#playerIntroPetals');
+  const petEmojis = ['🌸','🌸','🌺','🌸','🌸','🌸'];
+  petEmojis.forEach((e, i) => {
+    const p = document.createElement('div');
+    p.textContent = e;
+    p.style.cssText = `
+      position:absolute;
+      font-size:${1 + Math.random()}rem;
+      top:${10 + Math.random()*80}%;
+      left:${5 + Math.random()*90}%;
+      animation:piPetal ${1.5 + Math.random()*0.8}s ease forwards;
+      animation-delay:${i * 0.12}s;
+      opacity:0;
+    `;
+    petalContainer.appendChild(p);
+  });
+
+  // Après 2.3s → lance vraiment la vidéo
+  setTimeout(() => {
+    introDiv.remove();
+    frame.style.display = 'block';
+    playEpisode(epIndex);
+  }, 2300);
+}
+
+// ══ POPUP +18 ══
+function confirmWarning() {
+  document.getElementById('warnOverlay').classList.remove('open');
+  launchModal(pendingAnime, pendingEp);
+  pendingAnime = null;
+}
+function closeWarning() {
+  document.getElementById('warnOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  pendingAnime = null;
+}
+
+// ══ PLAYER ══
+function playEpisode(index) {
+  currentEpIndex = index;
+  const ep = currentAnime.episodes[index];
+  saveProgress(currentAnime.id, index);
+
+  document.getElementById('modalAnimeTitle').textContent = currentAnime.titre;
+  document.getElementById('modalEpTitle').textContent = `Épisode ${index+1} — ${ep.titre}`;
+
+  const url = ep.url.includes('?') ? ep.url + '&autoplay=1' : ep.url + '?autoplay=1';
+  document.getElementById('playerFrame').src = url;
+
+  document.getElementById('prevBtn').disabled = index === 0;
+  document.getElementById('nextBtn').disabled = index === currentAnime.episodes.length - 1;
+
+  document.querySelectorAll('.ep-item').forEach((el,i) => el.classList.toggle('active', i === index));
+  document.querySelector('.modal').scrollTo({top:0, behavior:'smooth'});
+  renderGrid(getVisibleAnimes());
+  renderContinue();
+}
+
+function buildEpList() {
+  const list = document.getElementById('epList');
+  list.innerHTML = '';
+  currentAnime.episodes.forEach((ep, i) => {
+    const item = document.createElement('div');
+    item.className = 'ep-item' + (i === currentEpIndex ? ' active' : '');
+    item.onclick = () => playEpisode(i);
+    item.innerHTML = `<span class="ep-flower">🌸</span><div class="ep-num">ÉP.${String(i+1).padStart(2,'0')}</div><div class="ep-title">${ep.titre}</div><div class="ep-chevron">▶</div>`;
+    list.appendChild(item);
+  });
+}
+
+function navigate(dir) {
+  const next = currentEpIndex + dir;
+  if (next >= 0 && next < currentAnime.episodes.length) playEpisode(next);
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('playerFrame').src = '';
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+document.getElementById('warnOverlay').addEventListener('click', function(e){ if(e.target===this) closeWarning(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape'){ closeModal(); closeWarning(); } });
+</script>
+</body>
+</html>
